@@ -3,11 +3,12 @@ import * as React from 'react'
 import * as Constants from '../../constants/fs'
 import {Box, ConfirmModal, HeaderOnMobile, Icon, MaybePopup, ProgressIndicator} from '../../common-adapters'
 import {globalStyles, globalMargins} from '../../styles'
+import * as Types from '../../constants/types/fs'
 
 export type Props = {
   onBack: () => void,
-  onLeave: () => void,
-  name: string,
+  onDelete: () => void,
+  path: Types.Path,
   title: string,
 }
 
@@ -24,17 +25,18 @@ const Spinner = HeaderOnMobile(_Spinner)
 
 const Header = (props: Props) => <Icon type="iconfont-trash" sizeType="Big" />
 
-const _ReallyDeleteFile = (props: Props) => (
-  <ConfirmModal
-    confirmText={`Yes, delete ${props.name}`}
-    description={`There's no trash can - "${props.name}" will be gone forever.`}
-    header={<Header {...props} />}
-    onCancel={props.onBack}
-    onConfirm={props.onLeave}
-    prompt={`Are you sure you want to delete "${props.name}"?`}
-    waitingKey={Constants.deleteFolderWaitingKey(props.name)}
-  />
-)
+const _ReallyDeleteFile = (props: Props) =>
+  !!props.path && (
+    <ConfirmModal
+      confirmText={`Yes, delete it.`}
+      description={`There's no trash can - "${Types.pathToString(props.path)}" will be gone forever.`}
+      header={<Header {...props} />}
+      onCancel={props.onBack}
+      onConfirm={props.onDelete}
+      prompt={`Are you sure you want to delete "${Types.pathToString(props.path)}"?`}
+      waitingKey={Constants.deleteFolderWaitingKey(props.path)}
+    />
+  )
 
 export default HeaderOnMobile(_ReallyDeleteFile)
 export {Spinner}
